@@ -12,10 +12,11 @@ public class LoginFrame extends JFrame {
     private JCheckBox confirmationCheckBox;
     private JButton startButton;
     private JButton exitButton;
+    private JButton manageQuestionsButton; // Nút mới để mở ManageQuestionsFrame
 
     public LoginFrame() {
         setTitle("Quiz");
-        setSize(400, 400);
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -43,7 +44,7 @@ public class LoginFrame extends JFrame {
         add(inputPanel, BorderLayout.CENTER);
 
         // Panel nút
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10)); // Thay đổi thành 1 hàng, 3 cột
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
         startButton = new JButton("Tiếp tục");
@@ -52,7 +53,14 @@ public class LoginFrame extends JFrame {
         exitButton = new JButton("Thoát");
         exitButton.addActionListener(e -> System.exit(0));
 
+        manageQuestionsButton = new JButton("Quản lý câu hỏi"); // Nút mới
+        manageQuestionsButton.addActionListener(e -> {
+            dispose(); // Đóng LoginFrame
+            new ManageQuestionsFrame().setVisible(true); // Mở ManageQuestionsFrame
+        });
+
         buttonPanel.add(startButton);
+        buttonPanel.add(manageQuestionsButton); // Thêm nút mới vào panel
         buttonPanel.add(exitButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
