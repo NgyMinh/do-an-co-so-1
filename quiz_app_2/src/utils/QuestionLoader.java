@@ -101,4 +101,65 @@ public class QuestionLoader {
             throw new RuntimeException("Lỗi khi lưu câu hỏi vào cơ sở dữ liệu.", e);
         }
     }
+    
+    public static void deleteQuestionFromDatabase(String subject, Question question) throws Exception {
+        String tableName = getTableName(subject);
+        String query = "DELETE FROM " + tableName + " WHERE question = ? AND answer_a = ? AND answer_b = ? AND answer_c = ? AND answer_d = ? AND correct_answer = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, question.getContent());
+            stmt.setString(2, question.getOptions()[0]);
+            stmt.setString(3, question.getOptions()[1]);
+            stmt.setString(4, question.getOptions()[2]);
+            stmt.setString(5, question.getOptions()[3]);
+            stmt.setString(6, String.valueOf((char) ('A' + question.getCorrectAnswerIndex())));
+
+            int affected = stmt.executeUpdate();
+
+            if (affected == 0) {
+                throw new SQLException("Không tìm thấy câu hỏi để xóa.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi xóa câu hỏi: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi xóa câu hỏi khỏi cơ sở dữ liệu.", e);
+        }
+    }
+    
+    public static void updateQuestionInDatabase(String subject, int id, Question question) throws Exception {
+        String tableName = getTableName(subject);
+        String query = "UPDATE " + tableName + 
+                       " SET question = ?, answer_a = ?, answer_b = ?, answer_c = ?, answer_d = ?, correct_answer = ? " +
+                       "WHERE id = ?";  // dùng id để update
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, question.getContent());
+            stmt.setString(2, question.getOptions()[0]);
+            stmt.setString(3, question.getOptions()[1]);
+            stmt.setString(4, question.getOptions()[2]);
+            stmt.setString(5, question.getOptions()[3]);
+            stmt.setString(6, String.valueOf((char) ('A' + question.getCorrectAnswerIndex())));
+            stmt.setInt(7, question.getId());  // dùng id ở đây
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Không tìm thấy câu hỏi để cập nhật.");
+            }
+
+            System.out.println("Câu hỏi đã được cập nhật thành công!");
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi cập nhật câu hỏi: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi cập nhật câu hỏi trong cơ sở dữ liệu.", e);
+        }
+    }
+
+
+    
+    
 }
